@@ -1,2 +1,2 @@
 # api-examples
-A collection of Examples showcasing how you can use the Quiq Public API.
+A collection of examples showcasing how you can use the Quiq Public API.
