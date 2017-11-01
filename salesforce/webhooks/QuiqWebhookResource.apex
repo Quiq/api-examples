@@ -56,8 +56,6 @@ global without sharing class QuiqWebhookResource {
         global Long initialAgentResponseDurationSinceAssignment;
         global Long averageAgentMessageDuration;
         global Long averageCustomerMessageDuration;
-        global Double averageResponseTime;
-        global Long timeToFirstResponse;
         global Integer numberOfAgentMessages;
         global Integer numberOfCustomerMessages;
         global Integer numberOfSystemMessages;
@@ -94,30 +92,39 @@ global without sharing class QuiqWebhookResource {
         global QuiqMessage[] messages;
         global QuiqMetrics metrics;
         global QuiqIntegration[] integrations;
-        global Map<String, String> integrationsData;
         global Long startTime;
         global Long endTime;
         global String queue;
     }
+    
+    global class QuiqPayload {
+        global QuiqConversation data;
+        global String eventType;
+        global String id;
+        global Long timestamp;
+    }
 
     @HttpPost
-    global static void acceptData(QuiqConversation data, String eventType, String id, Long timestamp)
+    global static void acceptData()
     {
         RestRequest req = RestContext.request;
+        String body = req.requestBody.toString();
+        QuiqPayload payload = (QuiqPayload) JSON.deserialize(body, QuiqPayload.class);
+
         RestResponse res = RestContext.response;
         // Ensure that the callers of this API are Quiq 
-        // This is an example of security. You should consider storing the secret in a safer location than hashed in APEX code
+        // This is just an example of security - you should consider storing the secret in a more safe location than just hashed in APEX code
         String hashedSecret = 'bd8b0b8028f0c34f61712a3c5f83b38b0e75dfd6';
         String hashedInput = EncodingUtil.convertToHex(Crypto.generateDigest('SHA1',Blob.valueOf(req.headers.get('X-Centricient-Hook-Token'))));
 
         if (hashedInput == hashedSecret) {
-          if (data.status == 'closed') {
+          if (payload.data.status == 'closed') {
             QuiqConversation__c convo = new QuiqConversation__c();
 
-            convo.averageAgentMessageDuration__c = (Double)data.metrics.averageAgentMessageDuration / 1000.00; //Divide by 1000 to convert from milliseconds into seconds.
-            convo.id__c = data.id;
-            convo.NAME = data.id;
-            convo.owner__c = data.owner;
+            convo.averageAgentMessageDuration__c = (Double)payload.data.metrics.averageAgentMessageDuration / 1000.00; //Divide by 1000 to convert from milliseconds into seconds.
+            convo.id__c = payload.data.id;
+            convo.NAME = payload.data.id;
+            convo.owner__c = payload.data.owner;
             insert convo;
           }
           res.statusCode = 200;
