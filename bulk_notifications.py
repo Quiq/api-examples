@@ -22,12 +22,12 @@ secret = args.secret
 platform = args.platform
 file = open(args.inputfile)
 
-messages = {}
+notifications = [] 
 for line in file:
     customerHandle, messageText = line.split(",")
-    messages[customerHandle] = {"text": messageText.strip()}
+    notifications.append({"handle": customerHandle, "message": {"text": messageText.strip()}})
 
-payload = json.dumps({"contactPoint": contact_point, "messages": messages})
+payload = json.dumps({"contactPoint": contact_point, "notifications": notifications})
 
 print "POSTING payload of: {}".format(payload)
 
