@@ -110,7 +110,7 @@ global without sharing class QuiqWebhookResource {
         RestRequest req = RestContext.request;
         String body = req.requestBody.toString();
         QuiqPayload payload = (QuiqPayload) JSON.deserialize(body, QuiqPayload.class);
-
+        
         RestResponse res = RestContext.response;
         // Ensure that the callers of this API are Quiq 
         // This is just an example of security - you should consider storing the secret in a more safe location than just hashed in APEX code
@@ -118,13 +118,15 @@ global without sharing class QuiqWebhookResource {
         String hashedInput = EncodingUtil.convertToHex(Crypto.generateDigest('SHA1',Blob.valueOf(req.headers.get('X-Centricient-Hook-Token'))));
 
         if (hashedInput == hashedSecret) {
-          if (payload.data.status == 'closed') {
+          if (payload.data != null && payload.data.status != null && payload.data.id != null && payload.data.status == 'closed') {
             QuiqConversation__c convo = new QuiqConversation__c();
-
-            convo.averageAgentMessageDuration__c = (Double)payload.data.metrics.averageAgentMessageDuration / 1000.00; //Divide by 1000 to convert from milliseconds into seconds.
+            if (payload.data.metrics != null && payload.data.metrics.averageAgentMessageDuration != null)
+                convo.averageAgentMessageDuration__c = (Double)payload.data.metrics.averageAgentMessageDuration / 1000.00; //Divide by 1000 to convert from milliseconds into seconds.
+ 
             convo.id__c = payload.data.id;
             convo.NAME = payload.data.id;
-            convo.owner__c = payload.data.owner;
+            if (payload.data.owner != null)
+              convo.owner__c = payload.data.owner;
             insert convo;
           }
           res.statusCode = 200;
