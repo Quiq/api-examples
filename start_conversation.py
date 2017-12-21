@@ -3,7 +3,7 @@
 import requests
 import json
 import argparse
-import base64
+from quiq_shared import get_headers
 
 '''
 Example script to demonstrate the Quiq Start Conversation API.
@@ -60,8 +60,7 @@ start_conversation_payload = {
 
 print "POSTING payload of: {}".format(start_conversation_payload)
 
-encodedAuth = base64.b64encode("{}:{}".format(identity, secret))
-headers = {"Authorization": "Basic {}".format(encodedAuth), "Content-Type": "application/json", "Accept": "application/json"}
+headers = get_headers(identity,secret)
 
 res = requests.post(start_conversation_url, data=json.dumps(start_conversation_payload), headers=headers)
 

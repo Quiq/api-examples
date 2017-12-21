@@ -5,7 +5,7 @@ import json
 import requests
 from quiq_shared import get_headers
 
-parser = argparse.ArgumentParser(description='A script that takes a .csv of customer handles and messages and executes a bulk notification request against Quiq.')
+parser = argparse.ArgumentParser(description='Sends a message to the specified phone number')
 parser.add_argument('-c', '--contactpoint', required=True, help='The contact point to send from')
 parser.add_argument('-p', '--platform', required=True, help='The platform to send from. Only SMS is supported currently.')
 parser.add_argument('-n', '--handle', required=True, help='The customer handle (i.e. phone number +1-XXX-XXX-XXXX) to send to.')
@@ -22,11 +22,10 @@ secret = args.secret
 platform = args.platform
 cust_handle = args.handle
 
-# Create the Post payload
 payload = {
-    'handle': cust_handle,          # Customer phone number
-    'contactPoint': contact_point,  # Quiq contact point, used to route the response
-    'message' : {                   # Message to send to the end user
+    'handle': cust_handle,
+    'contactPoint': contact_point,
+    'message' : {
         'text': 'Message text to be sent via SMS'
     }
 }
