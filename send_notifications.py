@@ -15,11 +15,6 @@ parser.add_argument('-d', '--domain', required=True, help='The Quiq domain. i.e.
 
 args = parser.parse_args()
 
-domain = args.domain
-contact_point = args.contactpoint
-identity = args.identity
-secret = args.secret
-platform = args.platform
 file = open(args.inputfile)
 
 notifications = []
@@ -27,12 +22,12 @@ for line in file:
     customerHandle, messageText = line.split(",")
     notifications.append({"handle": customerHandle, "message": {"text": messageText.strip()}})
 
-payload = json.dumps({"contactPoint": contact_point, "notifications": notifications})
+payload = json.dumps({"contactPoint": args.contactpoint, "notifications": notifications})
 
 print "POSTING payload of: {}".format(payload)
 
-headers = get_headers(identity,secret)
-res = requests.post('https://{}/api/v1/messaging/platforms/{}/send-notifications'.format(domain, platform), data=payload, headers=headers)
+headers = get_headers(args.identity,args.secret)
+res = requests.post('https://{}/api/v1/messaging/platforms/{}/send-notifications'.format(args.domain, args.platform), data=payload, headers=headers)
 
 print "Status Code: {}".format(res.status_code)
 print "Response: {}".format(res.json())

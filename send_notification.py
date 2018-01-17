@@ -15,16 +15,9 @@ parser.add_argument('-d', '--domain', required=True, help='The Quiq domain. i.e.
 
 args = parser.parse_args()
 
-domain = args.domain
-contact_point = args.contactpoint
-identity = args.identity
-secret = args.secret
-platform = args.platform
-cust_handle = args.handle
-
 payload = {
-    'handle': cust_handle,
-    'contactPoint': contact_point,
+    'handle': args.handle,
+    'contactPoint': args.contactpoint,
     'message' : {
         'text': 'Message text to be sent via SMS'
     }
@@ -32,11 +25,8 @@ payload = {
 
 print "POSTING payload of: {}".format(payload)
 
-headers = get_headers(identity,secret)
-
-# This API sends a single message to a single number. Quiq will not create a conversation
-# until the end user responds.
-res = requests.post('https://{}/api/v1/messaging/platforms/{}/send-notification'.format(domain, platform), data=json.dumps(payload), headers=headers)
+headers = get_headers(args.identity,args.secret)
+res = requests.post('https://{}/api/v1/messaging/platforms/{}/send-notification'.format(args.domain, args.platform), data=json.dumps(payload), headers=headers)
 
 print "Status Code: {}".format(res.status_code)
 print "Response: {}".format(res.json())

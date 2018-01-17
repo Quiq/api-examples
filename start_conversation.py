@@ -22,20 +22,11 @@ parser.add_argument('-r', '--refno', required=False, help='The RightNow refernce
 
 args = parser.parse_args()
 
-domain = args.domain
-contact_point = args.contactpoint
-identity = args.identity
-secret = args.secret
-platform = args.platform
-cust_handle = args.handle
-incident = args.incident
-refno = args.refno
-
-start_conversation_url = 'https://{domain}.goquiq.com/api/v1/messaging/platforms/{platform}/start-conversation'.format(**vars())
+start_conversation_url = 'https://{args.domain}.goquiq.com/api/v1/messaging/platforms/{args.platform}/start-conversation'.format(**vars())
 
 start_conversation_payload = {
-  'handle': cust_handle,
-  'contactPoint': contact_point,
+  'handle': args.handle,
+  'contactPoint': args.contactpoint,
   'messages': [
     {
       'text': 'Testing the start convo API using the example Python script',
@@ -47,21 +38,20 @@ start_conversation_payload = {
     {
       'provider': 'rightnow',
       'name': 'incident',
-      'id': incident
+      'id': args.incident
     },
     {
       'provider': 'rightnow',
       'name': 'refno',
-      'id': refno
+      'id': args.refno
     }
-  ] if incident is not None and refno is not None else [],
+  ] if args.incident is not None and args.refno is not None else [],
   'integrationsData': {}
 }
 
 print "POSTING payload of: {}".format(start_conversation_payload)
 
-headers = get_headers(identity,secret)
-
+headers = get_headers(args.identity,args.secret)
 res = requests.post(start_conversation_url, data=json.dumps(start_conversation_payload), headers=headers)
 
 print "Status Code: {}".format(res.status_code)
