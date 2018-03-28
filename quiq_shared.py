@@ -5,7 +5,7 @@ import base64
 def get_headers(identity, secret):
 
     # Encode this string using Base 64
-    encodedAuth = base64.b64encode("{}:{}".format(identity, secret))
+    encodedAuth = base64.b64encode(("{}:{}".format(identity, secret).encode('UTF-8'))).decode('UTF-8')
 
     # In addition to the authentication, set the content type to JSON using the HTTP headers
     return {"Authorization": "Basic {}".format(encodedAuth), "Content-Type": "application/json", "Accept": "application/json"}
