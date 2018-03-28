@@ -24,10 +24,10 @@ for line in file:
 
 payload = json.dumps({"contactPoint": args.contactpoint, "notifications": notifications})
 
-print "POSTING payload of: {}".format(payload)
+print("POSTING payload of: {}".format(payload))
 
 headers = get_headers(args.identity,args.secret)
 res = requests.post('https://{}/api/v1/messaging/platforms/{}/send-notifications'.format(args.domain, args.platform), data=payload, headers=headers)
 
-print "Status Code: {}".format(res.status_code)
-print "Response: {}".format(res.json())
+print("Status Code: {}".format(res.status_code))
+print("Response: {}".format(res.json()))
