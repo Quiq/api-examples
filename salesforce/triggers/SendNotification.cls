@@ -17,7 +17,7 @@ public class SendNotification {
         request.setHeader('Accept', 'application/json');
         request.setHeader('Authorization', 'Basic $YOUR_QUIQ_SECRET_BASIC_AUTHENTICATION_SEE_QUIQ_DOCS_FOR_HELP');
 
-        request.setBody('{ "handle": "' + phoneNumber + '", "contactPoint": "main", "message": {"text": "This is an automated message. Hello, you currently have a low balance of: ' + balance + '" }}');
+        request.setBody('{ "handle": "' + phoneNumber + '", "contactPoint": "$YOUR_QUIQ_CONTACT_POINT", "message": {"text": "$THIS_IS_THE_EXAMPLE_REPLACE_ME This is an automated message. Hello, you currently have a low balance of: ' + balance + '" }}');
         HttpResponse response = http.send(request);
 
         if (response.getStatusCode() != 201) {
