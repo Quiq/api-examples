@@ -11,11 +11,16 @@ public class SendNotification {
         Http http = new Http();
         HttpRequest request = new HttpRequest();
 
-        request.setEndpoint('https://$YOUR_QUIQ_SITE/api/v1/messaging/platforms/SMS/send-notification');
+        quiqSettings__c settings = quiqSettings__c.getOrgDefaults();
+        
+        Blob headerValue = Blob.valueOf(settings.quiqTokenId__c + ':' + settings.quiqTokenSecret__c);
+        String authorizationHeader = 'Basic ' + EncodingUtil.base64Encode(headerValue); 
+
+        request.setEndpoint(settings.quiqUrl__c + '/api/v1/messaging/platforms/SMS/send-notification');
         request.setMethod('POST');
         request.setHeader('Content-Type', 'application/json');
         request.setHeader('Accept', 'application/json');
-        request.setHeader('Authorization', 'Basic $YOUR_QUIQ_SECRET_BASIC_AUTHENTICATION_SEE_QUIQ_DOCS_FOR_HELP');
+        request.setHeader('Authorization', authorizationHeader);
 
         request.setBody('{ "handle": "' + phoneNumber + '", "contactPoint": "$YOUR_QUIQ_CONTACT_POINT", "message": {"text": "$THIS_IS_THE_EXAMPLE_REPLACE_ME This is an automated message. Hello, you currently have a low balance of: ' + balance + '" }}');
         HttpResponse response = http.send(request);

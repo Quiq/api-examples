@@ -112,12 +112,9 @@ global without sharing class QuiqWebhookResource {
         QuiqPayload payload = (QuiqPayload) JSON.deserialize(body, QuiqPayload.class);
         
         RestResponse res = RestContext.response;
-        // Ensure that the callers of this API are Quiq 
-        // This is just an example of security - you should consider storing the secret in a more safe location than just hashed in APEX code
-        String hashedSecret = 'bd8b0b8028f0c34f61712a3c5f83b38b0e75dfd6';
-        String hashedInput = EncodingUtil.convertToHex(Crypto.generateDigest('SHA1',Blob.valueOf(req.headers.get('X-Centricient-Hook-Token'))));
+        goquiq__quiqSettings__c settings = goquiq__quiqSettings__c.getOrgDefaults();
 
-        if (hashedInput == hashedSecret) {
+        if (req.headers.get('X-Centricient-Hook-Token') == settings.goquiq__quiqWebhookSecret__c) {
           if (payload.data != null && payload.data.status != null && payload.data.id != null && payload.data.status == 'closed') {
             QuiqConversation__c convo = new QuiqConversation__c();
             if (payload.data.metrics != null && payload.data.metrics.averageAgentMessageDuration != null)
