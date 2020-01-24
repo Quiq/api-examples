@@ -34,7 +34,7 @@ payload = {
 print("POSTING payload of: {}".format(payload))
 
 headers = get_headers(args.identity,args.secret)
-res = requests.post('https://{}/api/v1/messaging/notify'.format(args.domain, args.platform), data=json.dumps(payload), headers=headers)
+res = requests.post('https://{}/api/v1/messaging/notify'.format(args.domain), data=json.dumps(payload), headers=headers)
 
 print("Status Code: {}".format(res.status_code))
 print("Response: {}".format(res.json()))
