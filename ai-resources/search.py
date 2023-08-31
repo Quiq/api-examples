@@ -3,7 +3,6 @@ import json
 import os
 import requests
 import argparse
-import mimetypes
 
 ap = argparse.ArgumentParser()
 ap.add_argument('--host')
