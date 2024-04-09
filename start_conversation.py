@@ -19,10 +19,31 @@ parser.add_argument('-s', '--secret', required=True, help='The app token secret.
 parser.add_argument('-d', '--domain', required=True, help='The Quiq domain. i.e. company.goquiq.com')
 parser.add_argument('-i', '--incident', required=False, help='The RightNow incident ID you wish to associate this conversation with.')
 parser.add_argument('-r', '--refno', required=False, help='The RightNow refernce number you wish to associate this conversation with.')
+parser.add_argument('-cf', '--customField', required=False, help='Custom field field id')
+parser.add_argument('-ccf', '--customContactField', required=False, help='Custom contact field field id')
 
 args = parser.parse_args()
 
 start_conversation_url = 'https://{args.domain}.goquiq.com/api/v1/messaging/platforms/{args.platform}/start-conversation'.format(**vars())
+
+fields = [
+    {
+      'field': 'schema.conversation.customer.firstName',
+      'value': 'Test First Name'
+    }
+  ]
+
+if (args.customField):
+  fields.append({
+      'field': 'schema.conversation.custom.' + args.customField,
+      'value': 'Test Custom Field Value'
+    })
+
+if (args.customContactField):
+  fields.append({
+      'field': 'schema.conversation.customer.custom.' + args.customField,
+      'value': 'Test Custom Contact Field Value'
+    })
 
 start_conversation_payload = {
   'handle': args.handle,
@@ -46,13 +67,14 @@ start_conversation_payload = {
       'id': args.refno
     }
   ] if args.incident is not None and args.refno is not None else [],
-  'integrationsData': {}
+  'integrationsData': {},
+  'fields': fields
 }
 
-print "POSTING payload of: {}".format(start_conversation_payload)
+print("POSTING payload of: {}".format(start_conversation_payload))
 
 headers = get_headers(args.identity,args.secret)
 res = requests.post(start_conversation_url, data=json.dumps(start_conversation_payload), headers=headers)
 
-print "Status Code: {}".format(res.status_code)
-print "Response: {}".format(res.json())
+print("Status Code: {}".format(res.status_code))
+print("Response: {}".format(res.json()))
